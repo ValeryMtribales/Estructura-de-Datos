@@ -1,4 +1,4 @@
-class FiguraGeometrica:
+<class FiguraGeometrica:
     def calcular_area(self):
         pass
 
