@@ -1,6 +1,7 @@
 from typing import Union
 from fastapi import FastAPI
-from model import Ticket
+from model.ticket import Ticket
+from model.node import Node
 from controller import TicketController
 from functions import add_queue
 

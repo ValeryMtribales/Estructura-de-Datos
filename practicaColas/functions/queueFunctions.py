@@ -1,6 +1,7 @@
 from model.ticket import Ticket
 from controller.ticketController import TicketController
 
+ 
 def add_queue(ticket: Ticket, ticketTypes: dict) -> None:
     """
     Add a ticket to the queue, using the TicketController class to manage the queue.
@@ -9,7 +10,7 @@ def add_queue(ticket: Ticket, ticketTypes: dict) -> None:
     print("Añadiendo ticket a la cola")
 
     # Verificar si el tipo de ticket es válido
-    if ticket.tipo not in ticket_types:
+    if ticket.tipo not in ticketTypes:
         print("Tipo de ticket no válido.")
         return
     
@@ -18,6 +19,6 @@ def add_queue(ticket: Ticket, ticketTypes: dict) -> None:
         ticket.prioridad = True
     
     # Agregar el ticket a la cola correspondiente
-    ticket_types[ticket.tipo].enqueue(ticket)
+    ticketTypes[ticket.tipo].enqueue(ticket)
     print(f"Ticket para {ticket.tipo} añadido correctamente con {'prioridad' if ticket.prioridad else 'atención regular'}.")
     
