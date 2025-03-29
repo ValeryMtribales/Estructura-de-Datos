@@ -23,12 +23,16 @@ def crear_turno(turno: Ticket):
 # Endpoint para obtener el siguiente turno (LIBERAR LA COLA)
 @app.get("/ticketNext")
 def obtener_siguiente_turno(tipo: str):
-    return {"mensaje": "El siguiente turno es", "datos_turno": ""}
+    siguiente_turno = get_next_ticket(tipo, ticket_types)
+    if siguiente_turno:
+       return {"mensaje": "El siguiente turno es", "datos_turno": siguiente_turno} 
+    return {"mensaje": "No hay turnos en la cola", "datos_turno": None}
 
 # Endpoint para listar los turnos en cola por el tipo de turno consultada listado de una cola especifica(personas en la caja)
 @app.get("/ticketList")
 def listar_turnos_cola(tipo: str):
-    return {"mensaje": "Lista de turnos en cola", "datos_turnos": ""}
+    lista_turnos = get_queue_list(tipo, ticket_types)
+    return {"mensaje": "Lista de turnos en cola", "datos_turnos": lista_turnos}
 
 # Otros endpoints existentes
 @app.get("/")
