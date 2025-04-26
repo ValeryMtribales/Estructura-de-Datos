@@ -1,12 +1,12 @@
 import pandas as pd
 
-hospitales = pd.read_csv('Ejercicio excel/Directorio.csv')
+hospitales = pd.read_csv('Ejercicio excel/hospitales.csv')
 print(hospitales.head()) 
 print(hospitales.dtypes) 
-hospitales['Número NIT'] = hospitales ['Número NIT'].str.replace(',','')
+hospitales['AÑO'] = hospitales ['AÑO'].str.replace(',','')
 print(hospitales.head()) 
 print(hospitales.dtypes)
-hospitales['Número NIT'] = hospitales ['Número NIT'].astype(int)
+hospitales['AÑO'] = hospitales ['AÑO'].astype(int)
 print(hospitales.head()) 
 print(hospitales.dtypes)
-print(hospitales.columns)
+
