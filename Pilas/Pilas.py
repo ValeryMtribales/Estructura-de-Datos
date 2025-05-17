@@ -1,74 +1,56 @@
 class Pila:
-    def __init__(self, max_tam=8):
-        self.max = max_tam
-        self.tope = 0
-        self.pila = [None] * self.max  
+    def __init__(self):
+        self.pila = []  
 
-    def pila_vacia(self):
-        return self.tope == 0
+    def push(self, elemento:str): 
+        self.pila.append(elemento)
+        print("Elemento agregado a la pila.")
 
-    def pila_llena(self):
-        return self.tope == self.max
-
-    def push(self, dato):
-        if self.pila_llena():
-            print("Error: La pila está llena, no se puede agregar más elementos.")
+    def pop(self): 
+        if self.pila:
+            print("Elemento eliminado:", self.pila.pop())
         else:
-            self.pila[self.tope] = dato
-            self.tope += 1
-            print(f"Elemento {dato} agregado a la pila.")
+            print("Error: La pila está vacía.")
 
-    def pop(self):
-        if self.pila_vacia():
-            print("Error: La pila está vacía, no hay elementos para quitar.")
+    def peek(self): 
+        if self.pila:
+            print("Elemento en la cima:", self.pila[-1])
         else:
-            eliminado = self.pila[self.tope - 1]
-            self.pila[self.tope - 1] = None  
-            print(f"Elemento {eliminado} eliminado de la pila.")
+            print("Error: La pila está vacía.")
 
-    def mostrar_elementos(self):
-        if self.pila_vacia():
+    def is_empty(self): 
+        if not self.pila:
             print("La pila está vacía.")
         else:
-            print("\nElementos actuales en la pila (de arriba hacia abajo):")
-            for i in range(self.tope - 1, -1, -1):  
-                print(f"Posición {i + 1}: {self.pila[i]}")
-            print()  
-def menu():
-    pila = Pila()
+            print("La pila NO está vacía.")
+
+
+# Creación de una instancia de la clase Pila
+pila = Pila()
+
+# Menú interactivo para manejar la pila
+while True:
+    print("\n------ Menú de Pila ------")
+    print("1. Insertar elemento (push)")
+    print("2. Eliminar elemento (pop)")
+    print("3. Ver elemento superior (peek)")
+    print("4. Verificar si la pila está vacía (isEmpty)")
+    print("5. Salir")
     
-    while True:
-        print(f"\nPila (Tope = {pila.tope})")
-        print("1 - Conocer si la pila está vacía")
-        print("2 - Conocer si la pila está llena")
-        print("3 - Colocar un elemento a la pila")
-        print("4 - Quitar un elemento de la pila")
-        print("5 - Mostrar los elementos actuales de la pila")
-        print("Cualquier otro número - Salir")
 
-        try:
-            seleccion = int(input("Seleccione una opción: "))
-        except ValueError:
-            print("Entrada no válida, ingrese un número.")
-            continue
+    opcion = input("Seleccione una opción: ")
 
-        if seleccion == 1:
-            print("La pila está vacía" if pila.pila_vacia() else "La pila NO está vacía")
-        elif seleccion == 2:
-            print("La pila está llena" if pila.pila_llena() else "La pila NO está llena")
-        elif seleccion == 3:
-            try:
-                dato = int(input("Ingrese un dato numérico: "))
-                pila.push(dato)
-            except ValueError:
-                print("Entrada no válida, ingrese un número.")
-        elif seleccion == 4:
-            pila.pop()
-        elif seleccion == 5:
-            pila.mostrar_elementos()
-        else:
-            print("Saliste del programa")
-            break
-
-# Ejecutar el programa
-menu()
+    if opcion == "1":
+        elemento = input("Ingrese el elemento a agregar: ")
+        pila.push(elemento)
+    elif opcion == "2":
+        pila.pop()
+    elif opcion == "3":
+        pila.peek()
+    elif opcion == "4":
+        pila.is_empty()
+    elif opcion == "5":
+        print("Saliendo del programa...")
+        break
+    else:
+        print("Opción inválida, intente de nuevo.")
