@@ -1,17 +1,28 @@
-def verificar_balanceo(expresion):
-    pila = []
-    pares = {')': '(', '}': '{', ']': '['}
+class VerificadorBalanceo:
+    def __init__(self, expresion: str):
+        self.expresion = expresion
+        self.pila = []
+        self.pares = {')': '(', '}': '{', ']': '['}
 
-    for simbolo in expresion:
-        if simbolo in '({[':
-            pila.append(simbolo)  # Agregar a la pila
-        elif simbolo in ')}]':
-            if not pila or pila.pop() != pares[simbolo]:
-                return False  # No está balanceado
+    # Método para verificar si la expresión está balanceada
+    def verificar_balanceo(self) -> bool:
+        for caracter in self.expresion:
+            if caracter in '({[':  
+                # Si es un símbolo de apertura, se agrega a la pila
+                self.pila.append(caracter)
+            elif caracter in ')}]':  
+                # Si es un símbolo de cierre, verifica si la pila está vacía o si el tope no coincide
+                if not self.pila or self.pila.pop() != self.pares[caracter]:
+                    return False  
+        # Si la pila está vacía al final, la expresión está balanceada
+        return not self.pila  
 
-    return not pila  # Debe estar vacía para ser balanceado
+    def __str__(self) -> str:
+        return f'La expresión {self.expresion} está balanceada: {self.verificar_balanceo()}'
 
-# Ejemplos de prueba
-expresiones = ["{[()()]}", "[(])", "{(a+b) * [c/d]}", "[{()}]", "{(a+b]}"]
-for expr in expresiones:
-    print(f"{expr}: {'Equilibrado' if verificar_balanceo(expr) else 'No equlibrado'}")
+
+expresion1 = VerificadorBalanceo('[{()}]')  
+print(expresion1)
+
+expresion2 = VerificadorBalanceo(']')
+print(expresion2)
