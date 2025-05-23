@@ -1,28 +1,34 @@
-class Pila:
-    def __init__(self):
-        self.pila = []  
+class NodoPila:
+    def _init_(self, valor, siguiente=None):
+        self.valor = valor
+        self.siguiente = siguiente
 
-    def push(self, elemento:str): 
-        self.pila.append(elemento)
-        print("Elemento agregado a la pila.")
+class PilaNodos:
+    def _init_(self):
+        self.cima = None
 
-    def pop(self): 
-        if self.pila:
-            print("Elemento eliminado:", self.pila.pop())
+    def push(self, valor):
+        nuevo = NodoPila(valor)
+        nuevo.siguiente = self.cima
+        self.cima = nuevo
+
+    def pop(self):
+        if self.cima == None:
+            return None
+        valor = self.cima.valor
+        self.cima = self.cima.siguiente
+        return valor
+
+    def top(self):
+        if self.cima == None:
+            return None
+        return self.cima.valor
+
+    def vacia(self):
+        if self.cima == None:
+            return True
         else:
-            print("Error: La pila está vacía.")
-
-    def peek(self): 
-        if self.pila:
-            print("Elemento en la cima:", self.pila[-1])
-        else:
-            print("Error: La pila está vacía.")
-
-    def is_empty(self): 
-        if not self.pila:
-            print("La pila está vacía.")
-        else:
-            print("La pila NO está vacía.")
+            return False
 
 
 # Creación de una instancia de la clase Pila
