@@ -1,10 +1,10 @@
 class NodoPila:
-    def _init_(self, valor, siguiente=None):
+    def __init__(self, valor, siguiente=None):
         self.valor = valor
         self.siguiente = siguiente
 
 class PilaNodos:
-    def _init_(self):
+    def __init__(self):
         self.cima = None
 
     def push(self, valor):
@@ -13,33 +13,39 @@ class PilaNodos:
         self.cima = nuevo
 
     def pop(self):
-        if self.cima == None:
+        if self.cima is None:
+            print("La pila está vacía.")
             return None
         valor = self.cima.valor
         self.cima = self.cima.siguiente
+        print(f"Elemento eliminado: {valor}")
         return valor
 
     def top(self):
-        if self.cima == None:
+        if self.cima is None:
+            print("La pila está vacía.")
             return None
+        print(f"Elemento superior: {self.cima.valor}")
         return self.cima.valor
 
     def vacia(self):
-        if self.cima == None:
+        if self.cima is None:
+            print("La pila está vacía.")
             return True
         else:
+            print("La pila NO está vacía.")
             return False
 
 
 # Creación de una instancia de la clase Pila
-pila = Pila()
+pila = PilaNodos()
 
 # Menú interactivo para manejar la pila
 while True:
     print("\n------ Menú de Pila ------")
     print("1. Insertar elemento (push)")
     print("2. Eliminar elemento (pop)")
-    print("3. Ver elemento superior (peek)")
+    print("3. Ver elemento superior (top)")
     print("4. Verificar si la pila está vacía (isEmpty)")
     print("5. Salir")
     
@@ -52,9 +58,9 @@ while True:
     elif opcion == "2":
         pila.pop()
     elif opcion == "3":
-        pila.peek()
+        pila.top()
     elif opcion == "4":
-        pila.is_empty()
+        pila.vacia()
     elif opcion == "5":
         print("Saliendo del programa...")
         break
