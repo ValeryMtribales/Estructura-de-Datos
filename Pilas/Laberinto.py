@@ -1,70 +1,122 @@
-# 0 = libre
-# 1 = muro
-# 2 = salida
-# 3 = ruta recorrida
-# 4 = ruta obsoleta
+class NodoCelda:
+    def _init_(self, valor, fila, columna):
+        self.valor = valor
+        self.fila = fila
+        self.columna = columna
+        self.siguiente = None
 
-laberinto = [
-    [1, 2, 1, 1, 1],
-    [0, 0, 0, 1, 0],
-    [0, 1, 0, 0, 0],
-    [0, 0, 1, 1, 0],
-    [0, 0, 1, 0, 0]
+class NodoFila:
+    def _init_(self):
+        self.primera_celda = None
+        self.siguiente = None
+
+class LaberintoNodos:
+    def _init_(self, matriz):
+        self.primera_fila = None
+        anterior_fila = None
+        for i, fila in enumerate(matriz):
+            nodo_fila = NodoFila()
+            if not self.primera_fila:
+                self.primera_fila = nodo_fila
+            else:
+                anterior_fila.siguiente = nodo_fila
+            anterior_fila = nodo_fila
+
+            anterior_celda = None
+            for j, valor in enumerate(fila):
+                nodo_celda = NodoCelda(valor, i, j)
+                if not nodo_fila.primera_celda:
+                    nodo_fila.primera_celda = nodo_celda
+                else:
+                    anterior_celda.siguiente = nodo_celda
+                anterior_celda = nodo_celda
+
+    def obtener_valor(self, fila, columna):
+        f = self.primera_fila
+        for _ in range(fila):
+            if f is None:
+                return None
+            f = f.siguiente
+        c = f.primera_celda
+        for _ in range(columna):
+            if c is None:
+                return None
+            c = c.siguiente
+        return c.valor if c else None
+
+class NodoPila:
+    def _init_(self, valor, siguiente=None):
+        self.valor = valor
+        self.siguiente = siguiente
+
+class PilaNodos:
+    def _init_(self):
+        self.cima = None
+
+    def push(self, valor):
+        self.cima = NodoPila(valor, self.cima)
+
+    def pop(self):
+        if self.cima is None:
+            return None
+        valor = self.cima.valor
+        self.cima = self.cima.siguiente
+        return valor
+
+    def top(self):
+        return self.cima.valor if self.cima else None
+
+    def vacia(self):
+        return self.cima is None
+
+    def to_list(self):
+        resultado = []
+        actual = self.cima
+        while actual:
+            resultado.append(actual.valor)
+            actual = actual.siguiente
+        return resultado[::-1]
+
+def resolver_laberinto_nodos(laberinto, inicio, salida):
+    filas, columnas = 5, 5  
+    pila = PilaNodos()
+    pila.push(inicio)
+    visitado = set()
+
+    movimientos = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+    while not pila.vacia():
+        x, y = pila.top()
+
+        if (x, y) == salida:
+            return pila.to_list()
+
+        visitado.add((x, y))
+        movido = False
+
+        for dx, dy in movimientos:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < filas and 0 <= ny < columnas and laberinto.obtener_valor(nx, ny) != 'X' and (nx, ny) not in visitado:
+                pila.push((nx, ny))
+                movido = True
+                break
+
+        if not movido:
+            pila.pop()
+
+    return None
+
+matriz = [
+    ['S', 'O', 'X', 'X', 'O'],
+    ['X', 'O', 'O', 'X', 'O'],
+    ['X', 'X', 'O', 'O', 'X'],
+    ['O', 'O', 'X', 'O', 'E'],
+    ['X', 'O', 'O', 'O', 'X']
 ]
 
-def mostrar(laberinto):
-    for fila in laberinto:
-        for celda in fila:
-            if celda == 3:
-                print("X", end=" ")  
-            elif celda == 4:
-                print(".", end=" ")  
-            elif celda == 1:
-                print("#", end=" ")  
-            elif celda == 2:
-                print("E", end=" ")  
-            else:
-                print("0", end=" ") 
-        print()  # Salto de línea después de cada fila
-    print()  
+laberinto = LaberintoNodos(matriz)
+inicio = (0, 0)
+salida = (3, 4)
 
-def es_valido(i:int, j:int):
-    # Verifica si una posición (i, j) está dentro de los límites del tablero
-    return 0 <= i < len(laberinto) and 0 <= j < len(laberinto[0]) 
-
-def buscar_con_pila(laberinto, inicio_i, inicio_j):
-    # Realiza una búsqueda de la salida utilizando una pila (búsqueda en profundidad)
-    
-    pila = [(inicio_i, inicio_j)]  
-    movimientos = [(-1, 0), (0, -1), (1, 0), (0, 1)]  
-
-    while pila:
-        i, j = pila.pop()  # Obtiene la última posición agregada a la pila
-
-        # Si la posición es inválida o ya ha sido visitada (muro, ruta o ruta obsoleta), se omite
-        if not es_valido(i, j) or laberinto[i][j] in (1, 3, 4):  
-            continue  
-
-        if laberinto[i][j] == 2:  
-            print("¡Encontró la salida!")
-            mostrar(laberinto)
-            return True
-
-        # Marca la celda actual como parte de la ruta recorrida
-        laberinto[i][j] = 3  
-
-        # Agrega las posiciones adyacentes a la pila en las cuatro direcciones posibles
-        for di, dj in movimientos:
-            pila.append((i + di, j + dj))
-
-    # Si no se encontró la salida, convierte todas las rutas recorridas en rutas antiguas
-    for i in range(len(laberinto)):
-        for j in range(len(laberinto[i])):
-            if laberinto[i][j] == 3:
-                laberinto[i][j] = 4  
-
-    print("No se encontró la salida.")
-    return False
-
-buscar_con_pila(laberinto, 4, 0)
-print(laberinto)
+solucion = resolver_laberinto_nodos(laberinto, inicio, salida)
+print("Ruta encontrada:" if solucion else "No hay solución", solucion)
