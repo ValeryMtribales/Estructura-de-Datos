@@ -1,9 +1,7 @@
-# Proyecto: Administrador de Tareas tipo Trello con estructuras y ML
-
 from sklearn.tree import DecisionTreeClassifier
 from collections import deque
 
-# ---------------------- MODELO DE TAREA ----------------------
+
 class Tarea:
     def __init__(self, titulo, categoria, duracion, prioridad):
         self.titulo = titulo
@@ -11,7 +9,7 @@ class Tarea:
         self.duracion = duracion
         self.prioridad = prioridad
 
-# ---------------------- LISTA ENLAZADA ----------------------
+
 class NodoTarea:
     def __init__(self, tarea):
         self.tarea = tarea
@@ -62,7 +60,7 @@ class ListaTareas:
             return actual.tarea
         return None
 
-# ---------------------- PILA PARA DESHACER ----------------------
+
 class NodoPila:
     def __init__(self, accion):
         self.accion = accion
@@ -84,7 +82,7 @@ class PilaDeshacer:
             return accion
         return None
 
-# ---------------------- COLA DE PLANIFICACION ----------------------
+
 class NodoCola:
     def __init__(self, tarea):
         self.tarea = tarea
@@ -112,7 +110,7 @@ class Planificador:
             return tarea
         return None
 
-# ---------------------- TABLERO (tipo Trello) ----------------------
+
 class Tablero:
     def __init__(self):
         self.listas = {
@@ -134,11 +132,11 @@ class Tablero:
         print(" | ".join(headers))
         print("-" * (34 * len(self.listas)))
 
-        # Obtener listas de tareas
+   
         listas_tareas = [lista.obtener_tareas() for lista in self.listas.values()]
         max_len = max(len(l) for l in listas_tareas)
 
-        # Mostrar filas horizontales
+     
         for i in range(max_len):
             fila = []
             for tareas in listas_tareas:
@@ -149,7 +147,7 @@ class Tablero:
                     fila.append(" ".ljust(30))
             print(" | ".join(fila))
 
-# ---------------------- ML: Recomendador ----------------------
+
 class Recomendador:
     def __init__(self):
         self.modelo = DecisionTreeClassifier()
