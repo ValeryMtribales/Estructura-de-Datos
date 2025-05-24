@@ -1,0 +1,170 @@
+# Proyecto: Administrador de Tareas tipo Trello con estructuras y ML
+
+from sklearn.tree import DecisionTreeClassifier
+from collections import deque
+
+# ---------------------- MODELO DE TAREA ----------------------
+class Tarea:
+    def __init__(self, titulo, categoria, duracion, prioridad):
+        self.titulo = titulo
+        self.categoria = categoria
+        self.duracion = duracion
+        self.prioridad = prioridad
+
+# ---------------------- LISTA ENLAZADA ----------------------
+class NodoTarea:
+    def __init__(self, tarea):
+        self.tarea = tarea
+        self.siguiente = None
+
+class ListaTareas:
+    def __init__(self):
+        self.cabeza = None
+
+    def agregar_tarea(self, tarea):
+        nuevo = NodoTarea(tarea)
+        nuevo.siguiente = self.cabeza
+        self.cabeza = nuevo
+
+    def mostrar_recursivo(self, nodo=None):
+        if nodo is None:
+            nodo = self.cabeza
+        if nodo:
+            t = nodo.tarea
+            print(f"- {t.titulo} | {t.categoria} | {t.duracion}h | Prioridad: {t.prioridad}")
+            self.mostrar_recursivo(nodo.siguiente)
+
+    def buscar_tarea(self, titulo):
+        actual = self.cabeza
+        anterior = None
+        while actual:
+            if actual.tarea.titulo == titulo:
+                return anterior, actual
+            anterior = actual
+            actual = actual.siguiente
+        return None, None
+
+    def eliminar_tarea(self, titulo):
+        anterior, actual = self.buscar_tarea(titulo)
+        if actual:
+            if anterior:
+                anterior.siguiente = actual.siguiente
+            else:
+                self.cabeza = actual.siguiente
+            return actual.tarea
+        return None
+
+# ---------------------- PILA PARA DESHACER ----------------------
+class PilaDeshacer:
+    def __init__(self):
+        self.pila = []
+
+    def registrar(self, accion):
+        self.pila.append(accion)
+
+    def deshacer(self):
+        if self.pila:
+            return self.pila.pop()
+        return None
+
+# ---------------------- COLA DE PLANIFICACION ----------------------
+class Planificador:
+    def __init__(self):
+        self.cola = deque()
+
+    def agendar(self, tarea):
+        self.cola.append(tarea)
+
+    def siguiente(self):
+        if self.cola:
+            return self.cola.popleft()
+        return None
+
+# ---------------------- TABLERO (tipo Trello) ----------------------
+class Tablero:
+    def __init__(self):
+        self.listas = {
+            "To Do": ListaTareas(),
+            "Doing": ListaTareas(),
+            "Done": ListaTareas()
+        }
+
+    def mover_tarea(self, desde, hacia, titulo):
+        tarea = self.listas[desde].eliminar_tarea(titulo)
+        if tarea:
+            self.listas[hacia].agregar_tarea(tarea)
+            return True
+        return False
+
+    def mostrar_tablero(self):
+        for nombre, lista in self.listas.items():
+            print(f"\n== {nombre} ==")
+            lista.mostrar_recursivo()
+
+# ---------------------- ML: Recomendador ----------------------
+class Recomendador:
+    def __init__(self):
+        self.modelo = DecisionTreeClassifier()
+        self.entrenado = False
+        self.categorias = {"trabajo": 0, "personal": 1, "otro": 2}
+        self.prioridades = {"alta": 2, "media": 1, "baja": 0}
+
+    def entrenar(self):
+        # Datos ficticios: [categoria, duracion] => prioridad
+        X = [
+            [0, 5], [0, 3], [1, 2], [1, 1], [2, 4]
+        ]
+        y = [2, 1, 1, 0, 1]  # alta, media, media, baja, media
+        self.modelo.fit(X, y)
+        self.entrenado = True
+
+    def predecir_prioridad(self, categoria, duracion):
+        if self.entrenado:
+            x = [self.categorias.get(categoria, 2), duracion]
+            prio = self.modelo.predict([x])[0]
+            for k, v in self.prioridades.items():
+                if v == prio:
+                    return k
+        return "media"
+
+# ---------------------- USO DE EJEMPLO ----------------------
+if __name__ == "__main__":
+    tablero = Tablero()
+    pila = PilaDeshacer()
+    plan = Planificador()
+    recomendador = Recomendador()
+    recomendador.entrenar()
+
+    # Crear tareas
+    t1 = Tarea("Informe final", "trabajo", 5, recomendador.predecir_prioridad("trabajo", 5))
+    t2 = Tarea("Pagar servicios", "personal", 1, recomendador.predecir_prioridad("personal", 1))
+    t3 = Tarea("Organizar archivos", "trabajo", 3, recomendador.predecir_prioridad("trabajo", 3))
+
+    # Agregar tareas
+    tablero.listas["To Do"].agregar_tarea(t1)
+    tablero.listas["To Do"].agregar_tarea(t2)
+    tablero.listas["To Do"].agregar_tarea(t3)
+
+    # Mostrar
+    tablero.mostrar_tablero()
+
+    # Mover tarea
+    if tablero.mover_tarea("To Do", "Doing", "Informe final"):
+        pila.registrar(("Doing", "To Do", t1))
+
+    print("\nTras mover tarea:")
+    tablero.mostrar_tablero()
+
+    # Agendar tareas
+    plan.agendar(t1)
+    plan.agendar(t2)
+    print("\nTarea siguiente programada:", plan.siguiente().titulo)
+
+    # Deshacer última acción
+    accion = pila.deshacer()
+    if accion:
+        origen, destino, tarea = accion
+        tablero.listas[origen].eliminar_tarea(tarea.titulo)
+        tablero.listas[destino].agregar_tarea(tarea)
+        print("\nDeshacer última acción:")
+        tablero.mostrar_tablero()
