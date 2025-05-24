@@ -26,6 +26,14 @@ class ListaTareas:
         nuevo.siguiente = self.cabeza
         self.cabeza = nuevo
 
+    def obtener_tareas(self):
+        tareas = []
+        actual = self.cabeza
+        while actual:
+            tareas.append(actual.tarea)
+            actual = actual.siguiente
+        return tareas[::-1]  # Para mostrarlas en orden de inserción
+
     def mostrar_recursivo(self, nodo=None):
         if nodo is None:
             nodo = self.cabeza
@@ -55,29 +63,53 @@ class ListaTareas:
         return None
 
 # ---------------------- PILA PARA DESHACER ----------------------
+class NodoPila:
+    def __init__(self, accion):
+        self.accion = accion
+        self.siguiente = None
+
 class PilaDeshacer:
     def __init__(self):
-        self.pila = []
+        self.cima = None
 
     def registrar(self, accion):
-        self.pila.append(accion)
+        nuevo = NodoPila(accion)
+        nuevo.siguiente = self.cima
+        self.cima = nuevo
 
     def deshacer(self):
-        if self.pila:
-            return self.pila.pop()
+        if self.cima:
+            accion = self.cima.accion
+            self.cima = self.cima.siguiente
+            return accion
         return None
 
 # ---------------------- COLA DE PLANIFICACION ----------------------
+class NodoCola:
+    def __init__(self, tarea):
+        self.tarea = tarea
+        self.siguiente = None
+
 class Planificador:
     def __init__(self):
-        self.cola = deque()
+        self.frente = None
+        self.final = None
 
     def agendar(self, tarea):
-        self.cola.append(tarea)
+        nuevo = NodoCola(tarea)
+        if not self.frente:
+            self.frente = self.final = nuevo
+        else:
+            self.final.siguiente = nuevo
+            self.final = nuevo
 
     def siguiente(self):
-        if self.cola:
-            return self.cola.popleft()
+        if self.frente:
+            tarea = self.frente.tarea
+            self.frente = self.frente.siguiente
+            if not self.frente:
+                self.final = None
+            return tarea
         return None
 
 # ---------------------- TABLERO (tipo Trello) ----------------------
@@ -97,9 +129,25 @@ class Tablero:
         return False
 
     def mostrar_tablero(self):
-        for nombre, lista in self.listas.items():
-            print(f"\n== {nombre} ==")
-            lista.mostrar_recursivo()
+        # Mostrar títulos
+        headers = [f"{nombre:^30}" for nombre in self.listas.keys()]
+        print(" | ".join(headers))
+        print("-" * (34 * len(self.listas)))
+
+        # Obtener listas de tareas
+        listas_tareas = [lista.obtener_tareas() for lista in self.listas.values()]
+        max_len = max(len(l) for l in listas_tareas)
+
+        # Mostrar filas horizontales
+        for i in range(max_len):
+            fila = []
+            for tareas in listas_tareas:
+                if i < len(tareas):
+                    t = tareas[i]
+                    fila.append(f"{t.titulo} ({t.prioridad})".ljust(30))
+                else:
+                    fila.append(" ".ljust(30))
+            print(" | ".join(fila))
 
 # ---------------------- ML: Recomendador ----------------------
 class Recomendador:
@@ -152,13 +200,15 @@ if __name__ == "__main__":
     if tablero.mover_tarea("To Do", "Doing", "Informe final"):
         pila.registrar(("Doing", "To Do", t1))
 
-    print("\nTras mover tarea:")
+    print("\nTarea movida con éxito al tablero 'Doing:")
     tablero.mostrar_tablero()
 
     # Agendar tareas
     plan.agendar(t1)
     plan.agendar(t2)
-    print("\nTarea siguiente programada:", plan.siguiente().titulo)
+    siguiente_tarea = plan.siguiente()
+    if siguiente_tarea:
+        print("\nTarea siguiente programada:", siguiente_tarea.titulo)
 
     # Deshacer última acción
     accion = pila.deshacer()
@@ -168,3 +218,4 @@ if __name__ == "__main__":
         tablero.listas[destino].agregar_tarea(tarea)
         print("\nDeshacer última acción:")
         tablero.mostrar_tablero()
+
