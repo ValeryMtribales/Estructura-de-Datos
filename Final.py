@@ -181,34 +181,32 @@ if __name__ == "__main__":
     recomendador = Recomendador()
     recomendador.entrenar()
 
-    # Crear tareas
     t1 = Tarea("Informe final", "trabajo", 5, recomendador.predecir_prioridad("trabajo", 5))
     t2 = Tarea("Pagar servicios", "personal", 1, recomendador.predecir_prioridad("personal", 1))
     t3 = Tarea("Organizar archivos", "trabajo", 3, recomendador.predecir_prioridad("trabajo", 3))
 
-    # Agregar tareas
+
     tablero.listas["To Do"].agregar_tarea(t1)
     tablero.listas["To Do"].agregar_tarea(t2)
     tablero.listas["To Do"].agregar_tarea(t3)
 
-    # Mostrar
+
     tablero.mostrar_tablero()
 
-    # Mover tarea
+
     if tablero.mover_tarea("To Do", "Doing", "Informe final"):
         pila.registrar(("Doing", "To Do", t1))
 
     print("\nTarea movida con éxito al tablero 'Doing:")
     tablero.mostrar_tablero()
 
-    # Agendar tareas
     plan.agendar(t1)
     plan.agendar(t2)
     siguiente_tarea = plan.siguiente()
     if siguiente_tarea:
         print("\nTarea siguiente programada:", siguiente_tarea.titulo)
 
-    # Deshacer última acción
+
     accion = pila.deshacer()
     if accion:
         origen, destino, tarea = accion
