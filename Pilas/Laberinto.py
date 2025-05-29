@@ -1,17 +1,17 @@
 class NodoCelda:
-    def _init_(self, valor, fila, columna):
+    def __init__(self, valor, fila, columna):  # <-- corregido
         self.valor = valor
         self.fila = fila
         self.columna = columna
         self.siguiente = None
 
 class NodoFila:
-    def _init_(self):
+    def __init__(self):  # <-- corregido
         self.primera_celda = None
         self.siguiente = None
 
 class LaberintoNodos:
-    def _init_(self, matriz):
+    def __init__(self, matriz):  # <-- corregido
         self.primera_fila = None
         anterior_fila = None
         for i, fila in enumerate(matriz):
@@ -45,12 +45,12 @@ class LaberintoNodos:
         return c.valor if c else None
 
 class NodoPila:
-    def _init_(self, valor, siguiente=None):
+    def __init__(self, valor, siguiente=None):  # <-- corregido
         self.valor = valor
         self.siguiente = siguiente
 
 class PilaNodos:
-    def _init_(self):
+    def __init__(self):  # <-- corregido
         self.cima = None
 
     def push(self, valor):
