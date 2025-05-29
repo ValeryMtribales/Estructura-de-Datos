@@ -1,6 +1,4 @@
 from sklearn.tree import DecisionTreeClassifier
-from collections import deque
-
 
 class Tarea:
     def __init__(self, titulo, categoria, duracion, prioridad):
