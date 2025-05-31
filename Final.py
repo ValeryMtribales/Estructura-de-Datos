@@ -10,7 +10,7 @@ class Tarea:
         self.duracion = duracion
         self.prioridad = prioridad
 
-# =================== PILA ===================
+# ===================  ===================
 class Nodo:
     """Nodo individual para lista o pila"""
     def __init__(self, dato):
