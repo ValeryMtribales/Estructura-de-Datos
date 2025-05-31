@@ -10,7 +10,7 @@ class Tarea:
         self.duracion = duracion
         self.prioridad = prioridad
 
-# =================== LISTA ENLAZADA ===================
+# =================== PILA ===================
 class Nodo:
     """Nodo individual para lista o pila"""
     def __init__(self, dato):
@@ -122,7 +122,7 @@ class Planificador:
             return tarea
         return None
 
-# =================== TABLERO TRELLOgit ===================
+# =================== TABLERO TRELLO ===================
 class Tablero:
     """Tablero Trello con columnas To Do, Doing, Done"""
     def __init__(self):
