@@ -122,9 +122,9 @@ class Planificador:
             return tarea
         return None
 
-# =================== TABLERO KANBAN ===================
+# =================== TABLERO TRELLOgit ===================
 class Tablero:
-    """Tablero Kanban con columnas To Do, Doing, Done"""
+    """Tablero Trello con columnas To Do, Doing, Done"""
     def __init__(self):
         self.listas = {
             "To Do": ListaTareas(),
