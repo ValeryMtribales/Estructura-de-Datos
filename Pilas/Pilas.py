@@ -28,7 +28,7 @@ class PilaNodos:
         print(f"Elemento superior: {self.cima.valor}")
         return self.cima.valor
 
-    def vacia(self):
+    def isEmpty(self):
         if self.cima is None:
             print("La pila está vacía.")
             return True
