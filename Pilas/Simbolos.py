@@ -19,8 +19,11 @@ class PilaNodos:
         self.cima = self.cima.siguiente
         return valor
 
-    def vacia(self):
+    def isEmpty(self):
         return self.cima is None
+
+    def vacia(self):
+        return self.isEmpty()
 
 
 def verificar_balanceo(expresion):
